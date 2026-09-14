@@ -123,6 +123,35 @@ Validation rules:
 - Country codes must be two uppercase letters after normalization.
 - `marketing_opt_in` must be explicitly `true` or `false`.
 
+## Score API
+
+After signup, submit the participant's final game score with `POST /api/v1/participants/:participant_id/scores`:
+
+```json
+{
+	"score": 3,
+	"duration_ms": 45210
+}
+```
+
+The participant must exist, must have been created within the previous 24 hours, and may submit only one score. `score` and `duration_ms` must be positive integers. `played_at` is assigned by the server and cannot be supplied by the client.
+
+Successful requests return `201 Created`:
+
+```json
+{
+	"score": {
+		"id": 1,
+		"participant_id": 1,
+		"score": 3,
+		"duration_ms": 45210,
+		"played_at": "2026-09-14T12:00:00.000Z"
+	}
+}
+```
+
+Invalid, expired, missing, or duplicate submissions return `422 Unprocessable Entity` with the same field-keyed error format used by signup.
+
 For local Angular development, CORS allows `http://localhost:4200` by default. Set `CORS_ORIGINS` to a comma-separated list of approved origins when needed.
 
 ## Development

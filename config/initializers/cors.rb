@@ -5,12 +5,14 @@
 
 # Read more: https://github.com/cyu/rack-cors
 
-# Rails.application.config.middleware.insert_before 0, Rack::Cors do
-#   allow do
-#     origins "http://localhost:4200"
-#
-#     resource "*",
-#       headers: %w[Accept Authorization Content-Type Origin X-Requested-With Accept-Language],
-#       methods: [:get, :post, :put, :patch, :delete, :options, :head]
-#   end
-# end
+allowed_origins = ENV.fetch("CORS_ORIGINS", "http://localhost:4200").split(",").map(&:strip)
+
+Rails.application.config.middleware.insert_before 0, Rack::Cors do
+  allow do
+    origins(*allowed_origins)
+
+    resource "*",
+      headers: %w[Accept Authorization Content-Type Origin X-Requested-With Accept-Language],
+      methods: %i[get post options head]
+  end
+end

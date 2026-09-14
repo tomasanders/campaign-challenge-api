@@ -152,6 +152,24 @@ Successful requests return `201 Created`:
 
 Invalid, expired, missing, or duplicate submissions return `422 Unprocessable Entity` with the same field-keyed error format used by signup.
 
+## Leaderboard API
+
+Fetch the top ten scores with `GET /api/v1/leaderboard`:
+
+```json
+{
+	"leaderboard": [
+		{
+			"score": 12,
+			"first_name": "Ava",
+			"played_at": "2026-09-14T12:00:00.000Z"
+		}
+	]
+}
+```
+
+Results are ordered by score from highest to lowest and include the participant's first name and play date.
+
 For local Angular development, CORS allows `http://localhost:4200` by default. Set `CORS_ORIGINS` to a comma-separated list of approved origins when needed.
 
 ## Development

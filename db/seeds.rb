@@ -26,3 +26,10 @@ participants.each do |attributes|
     participant.assign_attributes(attributes)
   end
 end
+
+Participant.find_each do |participant|
+  Score.find_or_create_by!(participant: participant) do |score|
+    score.score = rand(1..12)
+    score.duration_ms = rand(30_000..120_000)
+  end
+end

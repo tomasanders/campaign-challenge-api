@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   scope "/api/v1", module: :api do
+    get "leaderboard", to: "leaderboard#index"
+
     resources :participants, only: %i[index create] do
       resources :scores, only: %i[index create]
     end

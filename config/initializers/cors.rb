@@ -9,7 +9,7 @@ allowed_origins = ENV.fetch("CORS_ORIGINS", "http://localhost:4200").split(",").
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins(*allowed_origins)
+    origins "http://localhost:4200"
 
     resource "*",
       headers: %w[Accept Authorization Content-Type Origin X-Requested-With Accept-Language],

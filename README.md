@@ -127,11 +127,43 @@ For local Angular development, CORS allows `http://localhost:4200` by default. S
 
 ## Development
 
-Install dependencies and prepare the database:
+This repository provides the Rails API. The participant signup experience is completed by running it alongside the companion Angular application in the `campaign-challenge-web` repository. Keep both repositories as sibling directories:
+
+```text
+Code/
+├── campaign-challenge-api/
+└── campaign-challenge-web/
+```
+
+### Start the Rails API
+
+From this repository, install dependencies and prepare the database once:
 
 ```sh
 bin/setup
 ```
+
+Start Rails in one terminal:
+
+```sh
+bin/rails server -p 3000
+```
+
+The API is available at `http://localhost:3000`.
+
+### Start the Angular application
+
+In a second terminal, install the web application's dependencies and start Angular:
+
+```sh
+cd ../campaign-challenge-web
+npm install
+npm start
+```
+
+Open `http://localhost:4200/` in a browser. The Angular development server proxies `/api/*` requests to the Rails API on port `3000`, and Rails allows `http://localhost:4200` through CORS by default.
+
+Run both servers during local development. Changes to Rails code are picked up by the Rails server, and changes to Angular code are picked up by the Angular development server.
 
 Run the Rails test suite:
 

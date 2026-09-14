@@ -1,4 +1,15 @@
 class Api::ScoresController < ApplicationController
+  def index
+    participant = Participant.find_by(id: params[:participant_id])
+    score = participant&.score
+
+    if score
+      render json: { score: score }
+    else
+      head :not_found
+    end
+  end
+
   def create
     participant = Participant.find_by(id: params[:participant_id])
 
@@ -32,6 +43,6 @@ class Api::ScoresController < ApplicationController
   end
 
   def render_error(field, message)
-    render json: { errors: { field => [message] } }, status: :unprocessable_entity
+    render json: { errors: { field => [ message ] } }, status: :unprocessable_entity
   end
 end

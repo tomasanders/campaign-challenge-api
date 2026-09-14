@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   scope "/api/v1", module: :api do
     resources :participants, only: %i[index create] do
-      resources :scores, only: :create
+      resources :scores, only: %i[index create]
     end
   end
 

@@ -1,6 +1,23 @@
 require "test_helper"
 
 class Api::ScoresControllerTest < ActionDispatch::IntegrationTest
+  test "returns a saved score for a participant" do
+    participant = participants(:one)
+    participant.update_column(:created_at, Time.current)
+    score = Score.create!(participant: participant, score: 2, duration_ms: 100)
+
+    get "/api/v1/participants/#{participant.id}/scores"
+
+    assert_response :success
+    assert_equal score.id, response.parsed_body["score"]["id"]
+  end
+
+  test "returns not found when a participant has not played" do
+    get "/api/v1/participants/#{participants(:one).id}/scores"
+
+    assert_response :not_found
+  end
+
   test "creates a score for an eligible participant" do
     participant = participants(:one)
     participant.update_column(:created_at, Time.current)
@@ -25,7 +42,7 @@ class Api::ScoresControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :unprocessable_entity
-    assert_equal ["does not exist"], response.parsed_body["errors"]["participant"]
+    assert_equal [ "does not exist" ], response.parsed_body["errors"]["participant"]
   end
 
   test "rejects a participant older than 24 hours" do
@@ -37,7 +54,7 @@ class Api::ScoresControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :unprocessable_entity
-    assert_equal ["is no longer eligible"], response.parsed_body["errors"]["participant"]
+    assert_equal [ "is no longer eligible" ], response.parsed_body["errors"]["participant"]
   end
 
   test "accepts a participant exactly 24 hours old" do

@@ -1,5 +1,20 @@
 # Campaign Challenge API
 
+Rails API for participant signup, score submission, and leaderboard results. The API is designed to run alongside the companion Angular application in the `campaign-challenge-web` repository.
+
+## Contents
+
+- [Requirements](#requirements)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+- [Database Setup](#database-setup)
+- [API](#api)
+  - [Signup](#signup)
+  - [Scores](#scores)
+  - [Leaderboard](#leaderboard)
+- [Development](#development)
+- [Development Assistance](#development-assistance)
+
 ## Requirements
 
 - Ruby 3.3.5
@@ -20,6 +35,21 @@ brew services start postgresql
 ```
 
 The application also includes a production Docker image. Docker users can build and run it with the commands in [Dockerfile](Dockerfile); production requires `RAILS_MASTER_KEY` and a configured database connection.
+
+## Quick Start
+
+Install dependencies, create the databases, and start the API:
+
+```sh
+bin/setup
+bin/rails server -p 3000
+```
+
+The API is then available at `http://localhost:3000`. To load the sample participants, run:
+
+```sh
+bin/rails db:seed
+```
 
 ## Configuration
 
@@ -71,18 +101,20 @@ To prepare the database and load seeds in one command:
 bin/rails db:setup
 ```
 
-## Signup API
+## API
+
+### Signup
 
 Create a participant with `POST /api/v1/participants`:
 
 ```json
 {
-	"first_name": "Ava",
-	"last_name": "Martinez",
-	"email": "ava@example.com",
-	"age": 29,
-	"country_code": "US",
-	"marketing_opt_in": true
+  "first_name": "Ava",
+  "last_name": "Martinez",
+  "email": "ava@example.com",
+  "age": 29,
+  "country_code": "US",
+  "marketing_opt_in": true
 }
 ```
 
@@ -90,16 +122,16 @@ Successful requests return `201 Created`:
 
 ```json
 {
-	"participant": {
-		"id": 1,
-		"first_name": "Ava",
-		"last_name": "Martinez",
-		"email": "ava@example.com",
-		"age": 29,
-		"country_code": "US",
-		"marketing_opt_in": true
-	},
-	"message": "Signup successful"
+  "participant": {
+    "id": 1,
+    "first_name": "Ava",
+    "last_name": "Martinez",
+    "email": "ava@example.com",
+    "age": 29,
+    "country_code": "US",
+    "marketing_opt_in": true
+  },
+  "message": "Signup successful"
 }
 ```
 
@@ -107,10 +139,10 @@ Invalid requests return `422 Unprocessable Entity` with field-keyed message arra
 
 ```json
 {
-	"errors": {
-		"email": ["is invalid"],
-		"age": ["must be less than or equal to 120"]
-	}
+  "errors": {
+    "email": ["is invalid"],
+    "age": ["must be less than or equal to 120"]
+  }
 }
 ```
 
@@ -123,14 +155,14 @@ Validation rules:
 - Country codes must be two uppercase letters after normalization.
 - `marketing_opt_in` must be explicitly `true` or `false`.
 
-## Score API
+### Scores
 
 After signup, submit the participant's final game score with `POST /api/v1/participants/:participant_id/scores`:
 
 ```json
 {
-	"score": 3,
-	"duration_ms": 45210
+  "score": 3,
+  "duration_ms": 45210
 }
 ```
 
@@ -140,37 +172,35 @@ Successful requests return `201 Created`:
 
 ```json
 {
-	"score": {
-		"id": 1,
-		"participant_id": 1,
-		"score": 3,
-		"duration_ms": 45210,
-		"played_at": "2026-09-14T12:00:00.000Z"
-	}
+  "score": {
+    "id": 1,
+    "participant_id": 1,
+    "score": 3,
+    "duration_ms": 45210,
+    "played_at": "2026-09-14T12:00:00.000Z"
+  }
 }
 ```
 
 Invalid, expired, missing, or duplicate submissions return `422 Unprocessable Entity` with the same field-keyed error format used by signup.
 
-## Leaderboard API
+### Leaderboard
 
 Fetch the top ten scores with `GET /api/v1/leaderboard`:
 
 ```json
 {
-	"leaderboard": [
-		{
-			"score": 12,
-			"first_name": "Ava",
-			"played_at": "2026-09-14T12:00:00.000Z"
-		}
-	]
+  "leaderboard": [
+    {
+      "score": 12,
+      "first_name": "Ava",
+      "played_at": "2026-09-14T12:00:00.000Z"
+    }
+  ]
 }
 ```
 
 Results are ordered by score from highest to lowest and include the participant's first name and play date.
-
-For local Angular development, CORS allows `http://localhost:4200` by default. Set `CORS_ORIGINS` to a comma-separated list of approved origins when needed.
 
 ## Development
 
@@ -221,3 +251,10 @@ bin/rails test
 ## Development Assistance
 
 GitHub Copilot was used to create and configure the API, create and configure the seed file, and implement the database validations.
+
+## Improvements
+If I had another day to work on this, the first thing I'd do is reorganize and rewrite the README file. It's a bit convoluted and could do with some better formatting.
+
+The next thing would be to add some support for other languages, probably via the i18n gem. A marketing campaign, especially one focused on Europe, would benefit from including at least a few languges other than english.
+
+The last thing I can think of is that I'd make the country code a selector instead, since I'm sure not everyone knows what's expected from that field. A selector would probably be more user-friendly.

@@ -6,7 +6,9 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   scope "/api/v1", module: :api do
-    resources :participants, only: %i[index create]
+    resources :participants, only: %i[index create] do
+      resources :scores, only: :create
+    end
   end
 
   # Defines the root path route ("/")

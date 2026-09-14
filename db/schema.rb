@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_14_020000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_14_030000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -25,4 +25,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_14_020000) do
     t.datetime "updated_at", null: false
     t.index "lower((email)::text)", name: "index_participants_on_lower_email", unique: true
   end
+
+  create_table "scores", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "duration_ms", null: false
+    t.bigint "participant_id", null: false
+    t.datetime "played_at", null: false
+    t.integer "score", null: false
+    t.datetime "updated_at", null: false
+    t.index ["participant_id"], name: "index_scores_on_participant_id", unique: true
+    t.check_constraint "duration_ms > 0", name: "scores_duration_ms_positive"
+    t.check_constraint "score > 0", name: "scores_score_positive"
+  end
+
+  add_foreign_key "scores", "participants"
 end

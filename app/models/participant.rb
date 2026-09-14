@@ -1,4 +1,6 @@
 class Participant < ApplicationRecord
+  has_one :score, dependent: :destroy
+
   before_validation :normalize_attributes
 
   validates :first_name, presence: true, length: { in: 2..50 }, format: {
